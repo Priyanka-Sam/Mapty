@@ -89,7 +89,13 @@ class App{
 #workouts = []
 
 constructor(){
+
+  //et user position
     this.getPosition()
+
+    //get data from local storage
+    this.getLocalStorage()
+
     form.addEventListener('submit',this.newWorkout.bind(this))     //this keyword would point to the DOM form and not the class object , hence needs binding
     inputType.addEventListener('change',this.toggleElevation)      //doesn't use this keyword, no need to bind
     containerWorkouts.addEventListener('click', this.moveToPopup.bind(this));
@@ -122,6 +128,8 @@ alert("Could not get your position.")
         // Handling clicks on map
         this.#map.on('click', this.showForm.bind(this));    
         
+        this.#workouts.forEach(work => {this.renderWorkoutMarker(work)})
+
         }
 
     showForm(mapE){  
@@ -160,7 +168,7 @@ setTimeout(() => (form.style.display = 'grid'),1000)
 
       //to zoom into that position
       this.#map.setView(workout.coords,this.#mapZoomLevel,{animate:true, pan:{duration:1}})
-        workout.click()
+        // workout.click()
     
     }
     
@@ -300,6 +308,22 @@ setLocalStorage()
 localStorage.setItem('workouts',JSON.stringify(this.#workouts))  //key value pair, converted into string
 }
 
+getLocalStorage()
+{
+  const data= JSON.parse(localStorage.getItem('workouts'))  //parse opposite of stringify
+  console.log(data)
+if(!data) return
+
+this.#workouts = data;
+
+this.#workouts.forEach(work => {this.renderWorkout(work)})
+}
+
+reset()
+{
+  localStorage.removeItem('workouts')
+  location.reload()
+}
 }
 
 
